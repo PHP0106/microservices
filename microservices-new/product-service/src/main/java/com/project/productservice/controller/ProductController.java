@@ -5,6 +5,7 @@ import com.project.productservice.dto.ProductResponse;
 import com.project.productservice.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,13 +20,37 @@ public class ProductController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public void creteProduct(@RequestBody ProductDTO productRequest) {
-        productService.createProduct(productRequest);
+    public ProductDTO creteProduct(@RequestBody ProductDTO productRequest) {
+         return productService.createProduct(productRequest);
     }
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public List<ProductResponse> getAllProduct() {
+    public List<ProductDTO> getAllProduct() {
        return productService.getAllProducts();
+    }
+
+    @GetMapping(value = "/getByCondition")
+    @ResponseStatus(HttpStatus.OK)
+    public List<ProductDTO> getProductsByCondition(@RequestParam (name = "name") String name,
+                                                   @RequestParam (name = "price") Float price) {
+        return productService.findProductByCondition(name, price);
+    }
+
+    @GetMapping(value = "/getById")
+    public ResponseEntity<?> getProductById(@RequestParam String id) {
+        return new ResponseEntity<>(productService.getProductById(id), HttpStatus.OK);
+    }
+
+    @PutMapping()
+    @ResponseStatus(HttpStatus.OK)
+    public ProductDTO updateProductById(@RequestBody ProductDTO productDTO) {
+        return productService.updateProductById(productDTO);
+    }
+
+    @DeleteMapping()
+    @ResponseStatus(HttpStatus.OK)
+    public ProductDTO deleteProductById(@RequestParam String id) {
+        return productService.deleteProductById(id);
     }
 }
